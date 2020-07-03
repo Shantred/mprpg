@@ -1,0 +1,95 @@
+[gd_scene load_steps=48 format=2]
+
+[ext_resource path="res://assets/characters/Warrior/Idle/__Warrior_Idle_007.png" type="Texture" id=1]
+[ext_resource path="res://assets/characters/Warrior/Idle/__Warrior_Idle_006.png" type="Texture" id=2]
+[ext_resource path="res://assets/characters/Warrior/Idle/__Warrior_Idle_011.png" type="Texture" id=3]
+[ext_resource path="res://assets/characters/Warrior/Idle/__Warrior_Idle_002.png" type="Texture" id=4]
+[ext_resource path="res://assets/characters/Warrior/Idle/__Warrior_Idle_003.png" type="Texture" id=5]
+[ext_resource path="res://assets/characters/Warrior/Idle/__Warrior_Idle_005.png" type="Texture" id=6]
+[ext_resource path="res://assets/characters/Warrior/Idle/__Warrior_Idle_009.png" type="Texture" id=7]
+[ext_resource path="res://assets/characters/Warrior/Idle/__Warrior_Idle_001.png" type="Texture" id=8]
+[ext_resource path="res://assets/characters/Warrior/Idle/__Warrior_Idle_010.png" type="Texture" id=9]
+[ext_resource path="res://assets/characters/Warrior/Idle/__Warrior_Idle_008.png" type="Texture" id=10]
+[ext_resource path="res://assets/characters/Warrior/Idle/__Warrior_Idle_000.png" type="Texture" id=11]
+[ext_resource path="res://assets/characters/Warrior/Idle/__Warrior_Idle_004.png" type="Texture" id=12]
+[ext_resource path="res://assets/characters/Warrior/Attack01/__Warrior_Attack01_001.png" type="Texture" id=13]
+[ext_resource path="res://assets/characters/Warrior/Attack01/__Warrior_Attack01_000.png" type="Texture" id=14]
+[ext_resource path="res://assets/characters/Warrior/Run/__Warrior_Run_005.png" type="Texture" id=15]
+[ext_resource path="res://assets/characters/Warrior/Attack01/__Warrior_Attack01_004.png" type="Texture" id=16]
+[ext_resource path="res://assets/characters/Warrior/Hurt/__Warrior_Hurt_002.png" type="Texture" id=17]
+[ext_resource path="res://assets/characters/Warrior/Run/__Warrior_Run_001.png" type="Texture" id=18]
+[ext_resource path="res://assets/characters/Warrior/Attack01/__Warrior_Attack01_003.png" type="Texture" id=19]
+[ext_resource path="res://assets/characters/Warrior/Run/__Warrior_Run_002.png" type="Texture" id=20]
+[ext_resource path="res://assets/characters/Warrior/Attack02/__Warrior_AttackALT_006.png" type="Texture" id=21]
+[ext_resource path="res://assets/characters/Warrior/Attack02/__Warrior_AttackALT_007.png" type="Texture" id=22]
+[ext_resource path="res://assets/characters/Warrior/Hurt/__Warrior_Hurt_003.png" type="Texture" id=23]
+[ext_resource path="res://assets/characters/Warrior/Attack01/__Warrior_Attack01_005.png" type="Texture" id=24]
+[ext_resource path="res://assets/characters/Warrior/Hurt/__Warrior_Hurt_007.png" type="Texture" id=25]
+[ext_resource path="res://assets/characters/Warrior/Attack01/__Warrior_Attack01_002.png" type="Texture" id=26]
+[ext_resource path="res://assets/characters/Warrior/Attack01/__Warrior_Attack01_007.png" type="Texture" id=27]
+[ext_resource path="res://assets/characters/Warrior/Attack02/__Warrior_AttackALT_001.png" type="Texture" id=28]
+[ext_resource path="res://assets/characters/Warrior/Attack02/__Warrior_AttackALT_003.png" type="Texture" id=29]
+[ext_resource path="res://assets/characters/Warrior/Attack02/__Warrior_AttackALT_005.png" type="Texture" id=30]
+[ext_resource path="res://assets/characters/Warrior/Attack01/__Warrior_Attack01_006.png" type="Texture" id=31]
+[ext_resource path="res://assets/characters/Warrior/Attack02/__Warrior_AttackALT_002.png" type="Texture" id=32]
+[ext_resource path="res://assets/characters/Warrior/Hurt/__Warrior_Hurt_001.png" type="Texture" id=33]
+[ext_resource path="res://assets/characters/Warrior/Hurt/__Warrior_Hurt_004.png" type="Texture" id=34]
+[ext_resource path="res://assets/characters/Warrior/Hurt/__Warrior_Hurt_005.png" type="Texture" id=35]
+[ext_resource path="res://assets/characters/Warrior/Run/__Warrior_Run_004.png" type="Texture" id=36]
+[ext_resource path="res://assets/characters/Warrior/Attack02/__Warrior_AttackALT_004.png" type="Texture" id=37]
+[ext_resource path="res://assets/characters/Warrior/Hurt/__Warrior_Hurt_006.png" type="Texture" id=38]
+[ext_resource path="res://assets/characters/Warrior/Run/__Warrior_Run_000.png" type="Texture" id=39]
+[ext_resource path="res://assets/characters/Warrior/Run/__Warrior_Run_003.png" type="Texture" id=40]
+[ext_resource path="res://assets/characters/Warrior/Run/__Warrior_Run_006.png" type="Texture" id=41]
+[ext_resource path="res://assets/characters/Warrior/Attack02/__Warrior_AttackALT_000.png" type="Texture" id=42]
+[ext_resource path="res://assets/characters/Warrior/Run/__Warrior_Run_007.png" type="Texture" id=43]
+[ext_resource path="res://assets/characters/Warrior/Hurt/__Warrior_Hurt_000.png" type="Texture" id=44]
+[ext_resource path="res://Player.gd" type="Script" id=45]
+
+[sub_resource type="SpriteFrames" id=1]
+animations = [ {
+"frames": [ ExtResource( 11 ), ExtResource( 8 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 12 ), ExtResource( 6 ), ExtResource( 2 ), ExtResource( 10 ), ExtResource( 1 ), ExtResource( 7 ), ExtResource( 9 ), ExtResource( 3 ) ],
+"loop": true,
+"name": "idle",
+"speed": 12.0
+}, {
+"frames": [ ExtResource( 14 ), ExtResource( 13 ), ExtResource( 26 ), ExtResource( 19 ), ExtResource( 16 ), ExtResource( 24 ), ExtResource( 31 ), ExtResource( 27 ) ],
+"loop": true,
+"name": "attack",
+"speed": 24.0
+}, {
+"frames": [ ExtResource( 42 ), ExtResource( 28 ), ExtResource( 32 ), ExtResource( 29 ), ExtResource( 37 ), ExtResource( 30 ), ExtResource( 21 ), ExtResource( 22 ) ],
+"loop": true,
+"name": "attack2",
+"speed": 12.0
+}, {
+"frames": [ ExtResource( 44 ), ExtResource( 33 ), ExtResource( 17 ), ExtResource( 23 ), ExtResource( 34 ), ExtResource( 35 ), ExtResource( 38 ), ExtResource( 25 ) ],
+"loop": true,
+"name": "hurt",
+"speed": 12.0
+}, {
+"frames": [ ExtResource( 39 ), ExtResource( 18 ), ExtResource( 20 ), ExtResource( 40 ), ExtResource( 36 ), ExtResource( 15 ), ExtResource( 41 ), ExtResource( 43 ) ],
+"loop": true,
+"name": "run",
+"speed": 12.0
+} ]
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 132.152, 236.659 )
+
+[node name="Player" type="KinematicBody2D"]
+position = Vector2( 22.1606, -68.698 )
+scale = Vector2( 0.25, 0.25 )
+z_index = 10
+script = ExtResource( 45 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = SubResource( 1 )
+animation = "idle"
+frame = 9
+playing = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -5, 25 )
+shape = SubResource( 2 )
+[connection signal="animation_finished" from="AnimatedSprite" to="." method="_on_AnimatedSprite_animation_finished"]

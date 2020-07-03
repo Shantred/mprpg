@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Control.gd" type="Script" id=1]
+
+[node name="Control" type="Control"]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Host Button" type="Button" parent="."]
+margin_right = 83.0
+margin_bottom = 20.0
+text = "Host Game"
+
+[node name="Join Button" type="Button" parent="."]
+margin_top = 29.0
+margin_right = 86.0
+margin_bottom = 49.0
+text = "Join Game"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="pressed" from="Host Button" to="." method="_on_Host_Button_pressed"]
+[connection signal="pressed" from="Join Button" to="." method="_on_Join_Button_pressed"]

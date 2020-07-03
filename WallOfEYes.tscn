@@ -1,0 +1,49 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://assets/enemies/wallofeyes.png" type="Texture" id=1]
+[ext_resource path="res://WallOfEYes.tres" type="Animation" id=2]
+[ext_resource path="res://death.tres" type="Animation" id=3]
+[ext_resource path="res://WallOfEYes.gd" type="Script" id=4]
+[ext_resource path="res://Healthbar.tscn" type="PackedScene" id=5]
+
+[sub_resource type="Animation" id=1]
+resource_name = "death2"
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 108.946, 174.321 )
+
+[node name="WallOfEYes" type="KinematicBody2D"]
+script = ExtResource( 4 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Idle"
+playback_default_blend_time = 1.0
+method_call_mode = 1
+anims/Idle = ExtResource( 2 )
+anims/death = ExtResource( 3 )
+"anims/death 2" = ExtResource( 3 )
+anims/death2 = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+vframes = 16
+hframes = 4
+frame = 2
+
+[node name="RespawnTimer" type="Timer" parent="."]
+wait_time = 10.0
+one_shot = true
+
+[node name="Healthbar" parent="." instance=ExtResource( 5 )]
+margin_left = -111.029
+margin_top = -240.786
+margin_right = -9.02849
+margin_bottom = -215.786
+rect_scale = Vector2( 2, 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2( -8.16223, 0 )
+shape = SubResource( 2 )
+[connection signal="tree_entered" from="." to="." method="_on_WallOfEYes_tree_entered"]
+[connection signal="timeout" from="RespawnTimer" to="." method="_on_RespawnTimer_timeout"]
