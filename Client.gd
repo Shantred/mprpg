@@ -15,6 +15,7 @@ func _ready():
 	peer.create_client("127.0.0.1", 1337)
 	
 	get_tree().set_network_peer(peer)
+	print("My id is: " + str(get_tree().get_network_unique_id()))
 	
 	my_peer = peer
 	
@@ -52,6 +53,7 @@ func _process(delta):
 				
 	# Simple movement for now, no prediction. Just tell the server we are currently moving.
 	if Input.is_action_just_pressed("ui_right"):
+		print("Sending command to go right!")
 		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", true)	
 	if Input.is_action_just_released("ui_right"):
 		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", false)
@@ -100,7 +102,10 @@ remote func pu(id, updateId, pos, velocity):
 		return
 		
 	last_update = updateId
-	players[id].updates[OS.get_ticks_msec] = { position = pos, velocity = velocity }
+	players[id].updates[OS.get_ticks_msec()] = { position = pos, velocity = velocity }
+	
+	if id == get_tree().get_network_unique_id():
+		print("Received an update about me!")
 	
 	# Only keep the last 10 updates
 	while len(players[id].updates) > 10:

@@ -11,6 +11,7 @@ var delta_interval = float(50 * 0.001)
 var players = {}
 
 var cached_player = load("res://Player.tscn")
+var cached_client = load("res://Client.tscn")
 
 
 var updateId = 0
@@ -39,12 +40,13 @@ func start_server():
 	get_tree().set_network_peer(host)
 	
 	print("Server started, listening on port " + str(DEFAULT_PORT))
+	print("Id is " + str(get_tree().get_network_unique_id()))
 	
 
 	
 	
 func player_connected(id):
-	print("Player connected!")
+	print("Player connected!" + str(id))
 
 	
 func player_disconnected(id):
@@ -64,8 +66,8 @@ remote func register_player(id, info):
 	info.health = 10
 	
 	# Tell new client about all other clients
-	for peerId in players:
-		rpc_id(id, "player_joined", peerId, players[peerId])
+	#for peerId in players:
+		#rpc_id(id, "player_joined", peerId, players[peerId])
 	
 	var node_player = cached_player.instance()
 	info.node = node_player
@@ -87,6 +89,7 @@ remote func register_player(id, info):
 	
 	
 remote func player_input(id, key, pressed):
+	print("Player " + str(id) + " pressed " + key)
 	if key == "left":
 		players[id].velocity.x = -1 if pressed else 0
 	if key == "right":
