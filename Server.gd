@@ -112,6 +112,7 @@ func _physics_process(delta):
 		if velocity.length() > 0:
 			velocity = velocity.normalized() * 400
 			players[peerId].velocity = velocity
+			players[peerId].node.move_and_collide(velocity * delta)
 			
 	delta_update += delta
 	while delta_update >= delta_interval:
@@ -123,6 +124,8 @@ func broadcast_world_positions():
 	# Update every player about every other player
 	for peerId in players:
 		for peerId2 in players:
-			rpc_unreliable_id(peerId, "pu", peerId2, updateId, players[peerId2].position, players[peerId2].velocity)
+			print("player " + str(peerId2) + " position X: " + str(players[peerId2].position.x) + " Y: " + str(players[peerId2].position.y))
+			print("player " + str(peerId2) + " position X: " + str(players[peerId2].node.position.x) + " Y: " + str(players[peerId2].node.position.y))
+			rpc_unreliable_id(peerId, "pu", peerId2, updateId, players[peerId2].node.position, players[peerId2].velocity)
 			
 	updateId += 1

@@ -37,18 +37,21 @@ func _process(delta):
 	var pos = Vector2(0,0)
 	var target_timestamp = OS.get_ticks_msec() - (50 * 2)
 	
-	for peerId in players:
+	for peerId in players:			
 		var keys = players[peerId].updates.keys()
 		for i in range(0, keys.size()):
-			if keys[i] > target_timestamp:
-				var percent = float(target_timestamp - keys[i-1]) / 50
+			#if keys[i] > target_timestamp:
 				
-				players[peerId].position.x = lerp(players[peerId].updates[keys[i-1]].position.x, players[peerId].updates[keys[i]].position.x, percent)
-				players[peerId].position.y = lerp(players[peerId].updates[keys[i-1]].position.y, players[peerId].updates[keys[i]].position.y, percent)
-				players[peerId].node.set_position(players[peerId].position)
-	
-				players[peerId].velocity = lerp(players[peerId].updates[keys[i-1]].velocity, players[peerId].updates[keys[i]].velocity, percent)
-			break
+			var percent = float(target_timestamp - keys[i-1]) / 50
+			
+			players[peerId].position.x = lerp(players[peerId].updates[keys[i-1]].position.x, players[peerId].updates[keys[i]].position.x, percent)
+			players[peerId].position.y = lerp(players[peerId].updates[keys[i-1]].position.y, players[peerId].updates[keys[i]].position.y, percent)
+			if peerId == get_tree().get_network_unique_id():
+				print("moving me to X:" + str(players[peerId].position.x) + " Y: " + str(players[peerId].position.y))
+			players[peerId].node.set_position(players[peerId].position)
+
+			players[peerId].velocity = lerp(players[peerId].updates[keys[i-1]].velocity, players[peerId].updates[keys[i]].velocity, percent)
+			#break
 				
 				
 	# Simple movement for now, no prediction. Just tell the server we are currently moving.
@@ -106,6 +109,8 @@ remote func pu(id, updateId, pos, velocity):
 	
 	if id == get_tree().get_network_unique_id():
 		print("Received an update about me!")
+		print("My position is now: X: " + str(pos.x) + " Y: " + str(pos.y))
+		
 	
 	# Only keep the last 10 updates
 	while len(players[id].updates) > 10:
