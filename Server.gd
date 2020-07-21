@@ -66,8 +66,8 @@ remote func register_player(id, info):
 	info.health = 10
 	
 	# Tell new client about all other clients
-	#for peerId in players:
-		#rpc_id(id, "player_joined", peerId, players[peerId])
+	for peerId in players:
+		rpc_id(id, "player_joined", peerId, players[peerId])
 	
 	var node_player = cached_player.instance()
 	info.node = node_player
