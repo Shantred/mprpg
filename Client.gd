@@ -40,6 +40,7 @@ func _process(delta):
 	
 	for peerId in players:
 		var keys = players[peerId].updates.keys()
+		print("There are " + str(keys.size()) + " keys")
 		for i in range(0, keys.size()):
 			print("Current key: " + str(keys[i]))
 			if keys[i] > target_timestamp:
@@ -54,7 +55,7 @@ func _process(delta):
 				players[peerId].node.set_position(players[peerId].position)
 	
 				players[peerId].velocity = lerp(players[peerId].updates[keys[i-1]].velocity, players[peerId].updates[keys[i]].velocity, percent)
-			break
+				break
 				
 				
 	# Simple movement for now, no prediction. Just tell the server we are currently moving.
