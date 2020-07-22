@@ -36,22 +36,26 @@ func _process(delta):
 	# main drawback is added latency (100 ms).
 	var pos = Vector2(0,0)
 	var target_timestamp = OS.get_ticks_msec() - (50 * 2)
+	print("Target timestamp: (" + str(target_timestamp) + ")")
 	
-	for peerId in players:			
+	for peerId in players:
 		var keys = players[peerId].updates.keys()
+		print("There are " + str(keys.size()) + " keys")
 		for i in range(0, keys.size()):
-			#if keys[i] > target_timestamp:
+			print("Current key: " + str(keys[i]))
+			if keys[i] > target_timestamp:
+				print("Key is greater than the target timestamp")
 				
-			var percent = float(target_timestamp - keys[i-1]) / 50
-			
-			players[peerId].position.x = lerp(players[peerId].updates[keys[i-1]].position.x, players[peerId].updates[keys[i]].position.x, percent)
-			players[peerId].position.y = lerp(players[peerId].updates[keys[i-1]].position.y, players[peerId].updates[keys[i]].position.y, percent)
-			if peerId == get_tree().get_network_unique_id():
-				print("moving me to X:" + str(players[peerId].position.x) + " Y: " + str(players[peerId].position.y))
-			players[peerId].node.set_position(players[peerId].position)
-
-			players[peerId].velocity = lerp(players[peerId].updates[keys[i-1]].velocity, players[peerId].updates[keys[i]].velocity, percent)
-			#break
+				var percent = float(target_timestamp - keys[i-1]) / 50
+				
+				players[peerId].position.x = lerp(players[peerId].updates[keys[i-1]].position.x, players[peerId].updates[keys[i]].position.x, percent)
+				players[peerId].position.y = lerp(players[peerId].updates[keys[i-1]].position.y, players[peerId].updates[keys[i]].position.y, percent)
+				if peerId == get_tree().get_network_unique_id():
+					print("moving me to X:" + str(players[peerId].position.x) + " Y: " + str(players[peerId].position.y))
+				players[peerId].node.set_position(players[peerId].position)
+	
+				players[peerId].velocity = lerp(players[peerId].updates[keys[i-1]].velocity, players[peerId].updates[keys[i]].velocity, percent)
+				break
 				
 				
 	# Simple movement for now, no prediction. Just tell the server we are currently moving.
@@ -107,13 +111,10 @@ remote func pu(id, updateId, pos, velocity):
 	last_update = updateId
 	players[id].updates[OS.get_ticks_msec()] = { position = pos, velocity = velocity }
 	
-	if id == get_tree().get_network_unique_id():
-		print("Received an update about me!")
-		print("My position is now: X: " + str(pos.x) + " Y: " + str(pos.y))
-		
 	
 	# Only keep the last 10 updates
 	while len(players[id].updates) > 10:
+		print("Deleting keys")
 		players[id].updates.erase(players[id].updates.keys()[0])
 		
 remote func player_joined(id, info):
