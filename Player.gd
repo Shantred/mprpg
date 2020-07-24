@@ -6,6 +6,7 @@ var is_attacking = false;
 var facing_direction = "right"
 var hit_distance = 85
 var player_id = 0
+var velocity = Vector2()
 
 
 
@@ -14,6 +15,13 @@ func _ready():
 	screen_size = get_viewport_rect().size
 	
 	
+func _physics_process(delta):
+	if velocity.length() > 0:
+		$AnimatedSprite.play("run")
+	else:
+		$AnimatedSprite.play("idle")
+	
+
 #func _physics_process(delta):
 #	var velocity = Vector2()
 #	if Input.is_action_pressed("ui_right"):

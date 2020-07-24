@@ -55,6 +55,7 @@ func _process(delta):
 				players[peerId].node.set_position(players[peerId].position)
 	
 				players[peerId].velocity = lerp(players[peerId].updates[keys[i-1]].velocity, players[peerId].updates[keys[i]].velocity, percent)
+				players[peerId].node.velocity = players[peerId].velocity
 				break
 				
 				
