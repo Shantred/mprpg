@@ -18,7 +18,9 @@ var updateId = 0
 
 
 onready var camera = $Camera2D
-onready var node_players = $Camera2D/players
+onready var world_node = $world
+onready var node_players = $world/players
+onready var node_mobs = $world/mobs
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -47,6 +49,7 @@ func start_server():
 	
 func player_connected(id):
 	print("Player connected!" + str(id))
+	print("First mob: " + world_node.get_mobs()[0].test());
 
 	
 func player_disconnected(id):

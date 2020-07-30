@@ -17,6 +17,8 @@ func _ready():
 	mob.position = position
 	mob.show()
 	add_child(mob)
+
+	get_parent().add_mob(mob);
 	
 func get_random_position(radius):
 	var x1 = rand_range(-1, 1)

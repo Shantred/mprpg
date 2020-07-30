@@ -52,3 +52,6 @@ func _on_RespawnTimer_timeout():
 
 func collide():
 	print("I collided")
+	
+func test():
+	return "test success!"

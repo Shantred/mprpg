@@ -20,6 +20,8 @@ func _physics_process(delta):
 		$AnimatedSprite.play("run")
 	else:
 		$AnimatedSprite.play("idle")
+	$AnimatedSprite.flip_h = velocity.x < 0
+	
 	
 
 #func _physics_process(delta):
