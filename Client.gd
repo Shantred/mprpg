@@ -2,12 +2,14 @@ extends Node
 
 var last_update = -1
 var players = {}
+var mobs = {}
 var cached_player = load("res://Player.tscn")
 var cached_woe = load("res://WallOfEYes.tscn")
 var my_peer = null
 var my_info = { name = "teent" }
 
-onready var node_players = $camera/players
+onready var node_players = $world/camera/players
+onready var world_mobs = $world/camera/mobs
 
 func _ready():
 	print("Connecting to server...")
@@ -36,22 +38,22 @@ func _process(delta):
 	# main drawback is added latency (100 ms).
 	var pos = Vector2(0,0)
 	var target_timestamp = OS.get_ticks_msec() - (50 * 2)
-	print("Target timestamp: (" + str(target_timestamp) + ")")
+	#print("Target timestamp: (" + str(target_timestamp) + ")")
 	
 	for peerId in players:
 		var keys = players[peerId].updates.keys()
-		print("There are " + str(keys.size()) + " keys")
+		#print("There are " + str(keys.size()) + " keys")
 		for i in range(0, keys.size()):
-			print("Current key: " + str(keys[i]))
+			#print("Current key: " + str(keys[i]))
 			if keys[i] > target_timestamp:
-				print("Key is greater than the target timestamp")
+				#print("Key is greater than the target timestamp")
 				
 				var percent = float(target_timestamp - keys[i-1]) / 50
 				
 				players[peerId].position.x = lerp(players[peerId].updates[keys[i-1]].position.x, players[peerId].updates[keys[i]].position.x, percent)
 				players[peerId].position.y = lerp(players[peerId].updates[keys[i-1]].position.y, players[peerId].updates[keys[i]].position.y, percent)
-				if peerId == get_tree().get_network_unique_id():
-					print("moving me to X:" + str(players[peerId].position.x) + " Y: " + str(players[peerId].position.y))
+				#if peerId == get_tree().get_network_unique_id():
+					#print("moving me to X:" + str(players[peerId].position.x) + " Y: " + str(players[peerId].position.y))
 				players[peerId].node.set_position(players[peerId].position)
 	
 				players[peerId].velocity = lerp(players[peerId].updates[keys[i-1]].velocity, players[peerId].updates[keys[i]].velocity, percent)
@@ -117,6 +119,26 @@ remote func pu(id, updateId, pos, velocity):
 	while len(players[id].updates) > 10:
 		print("Deleting keys")
 		players[id].updates.erase(players[id].updates.keys()[0])
+		
+
+remote func mu(updateId, mobId, pos, vel):
+	print("Received update on mob " + str(mobId))
+	
+	mobs[mobId].position = pos
+	mobs[mobId].velocity = vel
+	
+remote func mobload(mobs):
+	print(str(mobs))
+	print(mobs)
+	for mob in mobs:
+		var node_enemy = cached_woe.instance()
+		mobs[mob].node = node_enemy
+		node_enemy.set_position(mobs[mob].position)
+		node_enemy.show()
+		node_enemy.set_process(true)
+
+	
+		world_mobs.add_child(node_enemy)
 		
 remote func player_joined(id, info):
 	print("Player joined: " + str(id))

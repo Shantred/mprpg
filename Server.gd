@@ -49,7 +49,7 @@ func start_server():
 	
 func player_connected(id):
 	print("Player connected!" + str(id))
-	print("First mob: " + world_node.get_mobs()[0].test());
+	#print("First mob: " + str(world_node.get_mobs()[0].position.x));
 
 	
 func player_disconnected(id):
@@ -84,12 +84,18 @@ remote func register_player(id, info):
 	
 	node_players.add_child(node_player)
 	
+	# Inform the client about all monsters
+	rpc_id(id, "mobload",  world_node.get_mobs())
+	
 	players[id] = info
 	
 	# Tell other clients about new player
 	for peerId in players:
 		rpc_id(peerId, "player_joined", id, players[id])
 	
+	
+remote func mobload(mobs):
+	pass
 	
 remote func player_input(id, key, pressed):
 	print("Player " + str(id) + " pressed " + key)
@@ -127,8 +133,14 @@ func broadcast_world_positions():
 	# Update every player about every other player
 	for peerId in players:
 		for peerId2 in players:
-			print("player " + str(peerId2) + " position X: " + str(players[peerId2].position.x) + " Y: " + str(players[peerId2].position.y))
-			print("player " + str(peerId2) + " position X: " + str(players[peerId2].node.position.x) + " Y: " + str(players[peerId2].node.position.y))
+			#print("player " + str(peerId2) + " position X: " + str(players[peerId2].position.x) + " Y: " + str(players[peerId2].position.y))
+			#print("player " + str(peerId2) + " position X: " + str(players[peerId2].node.position.x) + " Y: " + str(players[peerId2].node.position.y))
 			rpc_unreliable_id(peerId, "pu", peerId2, updateId, players[peerId2].node.position, players[peerId2].velocity)
+	
+	#var mobs = world_node.get_mobs()
+	
+	#for mob in mobs:
+		#rpc_unreliable("mu", updateId, mob, mobs[mob].node.position, mobs[mob].node.velocity)
+	
 			
 	updateId += 1

@@ -3,6 +3,8 @@ extends KinematicBody2D
 export var MaxHealth = 10
 var currentHealth = 10
 
+var velocity = Vector2()
+
 
 func take_damage(amount):
 	currentHealth -= amount
