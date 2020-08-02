@@ -117,7 +117,7 @@ remote func pu(id, updateId, pos, velocity):
 	
 	# Only keep the last 10 updates
 	while len(players[id].updates) > 10:
-		print("Deleting keys")
+		#print("Deleting keys")
 		players[id].updates.erase(players[id].updates.keys()[0])
 		
 

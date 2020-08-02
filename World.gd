@@ -14,10 +14,14 @@ func _ready():
 	pass
 	
 func add_mob(mob):
-	var info = {}
-	info.name = "test"
-	info.node = mob
-	mobs[mob.get_instance_id()] = info
+	var props = {}
+	
+	# We store velocity and position in the top level of the dictionary and use it
+	# as a reference to update the node later.
+	props.velocity = Vector2()
+	props.position = mob.position
+	props.node = mob
+	mobs[mob.get_instance_id()] = props
 	
 func get_mobs():
 	return mobs
