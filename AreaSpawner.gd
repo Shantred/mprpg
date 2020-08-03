@@ -16,11 +16,12 @@ func _ready():
 	var mob = MobToSpawn.instance()
 	mob.position = position
 	mob.show()
-	add_child(mob)
+	get_parent().call_deferred("add_child", mob)
 
 	get_parent().add_mob(mob);
 	
 func get_random_position(radius):
+	print("Getting random position")
 	var x1 = rand_range(-1, 1)
 	var x2 = rand_range(-1, 1)
 	while x1*x1 + x2*x2 >= 1:

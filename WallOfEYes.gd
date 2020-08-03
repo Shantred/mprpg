@@ -19,6 +19,7 @@ func _ready():
 	$AnimationPlayer.play("Idle")
 	
 func on_death():
+	print("wallofeyes dead")
 	$AnimationPlayer.stop()
 	$AnimationPlayer.play("death")
 	$RespawnTimer.start();
@@ -35,6 +36,7 @@ func on_death():
 	print("Spawn radius is : " + str(spawner.AreaRadius))
 	
 func respawn():	
+	print("Respawning")
 	currentHealth = MaxHealth
 	$Healthbar.SetHealth(currentHealth)
 	$Healthbar.show()

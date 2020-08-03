@@ -7,11 +7,17 @@ extends Node2D
 # World exists on both server and client, with the server being authoritative
 # over the contents on both.
 
+
+onready var mobs_node = $mobs
 var mobs = {}
 var players = {}
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
+	var children = mobs_node.get_children()
+	if children.size() > 0:
+		for child in children:
+			print(str(child))
+			add_mob(child)
 	
 func add_mob(mob):
 	var props = {}

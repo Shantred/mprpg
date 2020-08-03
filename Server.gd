@@ -137,10 +137,10 @@ func broadcast_world_positions():
 			#print("player " + str(peerId2) + " position X: " + str(players[peerId2].node.position.x) + " Y: " + str(players[peerId2].node.position.y))
 			rpc_unreliable_id(peerId, "pu", peerId2, updateId, players[peerId2].node.position, players[peerId2].velocity)
 	
-	#var mobs = world_node.get_mobs()
+	var mobs = world_node.get_mobs()
 	
-	#for mob in mobs:
-		#rpc_unreliable("mu", updateId, mob, mobs[mob].node.position, mobs[mob].node.velocity)
+	for mob in mobs:
+		rpc_unreliable("mu", updateId, mob, mobs[mob].node.position, mobs[mob].node.velocity)
 	
 			
 	updateId += 1

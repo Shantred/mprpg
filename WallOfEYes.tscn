@@ -13,6 +13,7 @@ resource_name = "death2"
 extents = Vector2( 108.946, 174.321 )
 
 [node name="WallOfEYes" type="KinematicBody2D"]
+scale = Vector2( 0.25, 0.25 )
 script = ExtResource( 4 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
@@ -28,7 +29,6 @@ anims/death2 = SubResource( 1 )
 texture = ExtResource( 1 )
 vframes = 16
 hframes = 4
-frame = 2
 
 [node name="RespawnTimer" type="Timer" parent="."]
 wait_time = 10.0
@@ -45,5 +45,4 @@ rect_scale = Vector2( 2, 1 )
 visible = false
 position = Vector2( -8.16223, 0 )
 shape = SubResource( 2 )
-[connection signal="tree_entered" from="." to="." method="_on_WallOfEYes_tree_entered"]
 [connection signal="timeout" from="RespawnTimer" to="." method="_on_RespawnTimer_timeout"]

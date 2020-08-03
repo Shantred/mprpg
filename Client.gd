@@ -8,8 +8,8 @@ var cached_woe = load("res://WallOfEYes.tscn")
 var my_peer = null
 var my_info = { name = "teent" }
 
-onready var node_players = $world/camera/players
-onready var world_mobs = $world/camera/mobs
+onready var node_players = $world/players
+onready var world_mobs = $world/mobs
 
 func _ready():
 	print("Connecting to server...")
@@ -122,10 +122,13 @@ remote func pu(id, updateId, pos, velocity):
 		
 
 remote func mu(updateId, mobId, pos, vel):
-	print("Received update on mob " + str(mobId))
-	
-	mobs[mobId].position = pos
-	mobs[mobId].velocity = vel
+	# Mobs must be loaded before we can accept an update
+	if (mobs.size() > 0):
+		print("Received update on mob " + str(mobId))
+		print(str(mobs))
+		
+		mobs[mobId].position = pos
+		mobs[mobId].velocity = vel
 	
 remote func mobload(mobs):
 	print(str(mobs))
@@ -138,7 +141,7 @@ remote func mobload(mobs):
 		node_enemy.set_process(true)
 
 	
-		world_mobs.add_child(node_enemy)
+		$world.add_child(node_enemy)
 		
 remote func player_joined(id, info):
 	print("Player joined: " + str(id))
