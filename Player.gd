@@ -86,9 +86,45 @@ func _physics_process(delta):
 #				if results:
 #					results.collider.take_damage(3)
 
+func attack():
+	if is_attacking == false:
+		is_attacking = true
+		$AnimatedSprite.play("attack")
+		# On the first frame of an attack, use a raycast in the direction the user is facing
+		# to determine if we've hit an enemy
+		var space_state = get_world_2d().direct_space_state
+		var ray_vector = Vector2()
+		
+		# We base the distance of our raycasts on the width of the base sprite.
+		# For animated sprites, that means the first frame of idle.
+		if facing_direction == "right":
+			# We cast a full sprite width to the right. This creates a cast that is actually half a player distance
+			# away because the ray should be cast from the center of the sprite.
+			ray_vector.x = position.x + hit_distance
+			ray_vector.y = position.y
+		elif facing_direction == "left":
+			ray_vector.x = 	position.x - hit_distance
+			ray_vector.y = position.y
+		elif facing_direction == "up":
+			ray_vector.x = position.x
+			ray_vector.y = position.y - hit_distance
+		elif facing_direction == "down":
+			ray_vector.x = position.x
+			ray_vector.y = position.y + hit_distance
 
+
+		var results = space_state.intersect_ray(Vector2(position.x, position.y), ray_vector, [self])
+		if results:
+			results.collider.take_hit()
+		
+		
+	
+func is_attacking():
+	return is_attacking
+	
 func _on_AnimatedSprite_animation_finished():
 	if $AnimatedSprite.animation == "attack":
+		print("Done attacking")
 		is_attacking = false
 
 

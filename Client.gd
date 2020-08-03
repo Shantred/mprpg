@@ -61,27 +61,42 @@ func _process(delta):
 				break
 				
 				
+	# Handle actions for the current user
+	var playerId = get_tree().get_network_unique_id()
+	var player = players[playerId].node
+	
 	# Simple movement for now, no prediction. Just tell the server we are currently moving.
-	if Input.is_action_just_pressed("ui_right"):
-		print("Sending command to go right!")
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", true)	
-	if Input.is_action_just_released("ui_right"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", false)
-
-	if Input.is_action_just_pressed("ui_left"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "left", true)	
-	if Input.is_action_just_released("ui_left"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "left", false)
+	# When attacking, client-side we perform the attack immediately and do a raycast
+	# to see if we do damage. We use this ONLY to trigger animations on the attacked
+	# entity.
+	
+	if !player.is_attacking():
+		if Input.is_action_pressed("ui_select"):
+			player.attack()
+			
 		
-	if Input.is_action_just_pressed("ui_up"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "up", true)	
-	if Input.is_action_just_released("ui_up"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "up", false)
+		if Input.is_action_just_pressed("ui_right"):
+			print("Sending command to go right!")
+			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", true)	
+		if Input.is_action_just_released("ui_right"):
+			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", false)
+	
+		if Input.is_action_just_pressed("ui_left"):
+			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "left", true)	
+		if Input.is_action_just_released("ui_left"):
+			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "left", false)
+			
+		if Input.is_action_just_pressed("ui_up"):
+			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "up", true)	
+		if Input.is_action_just_released("ui_up"):
+			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "up", false)
+			
+		if Input.is_action_just_pressed("ui_down"):
+			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", true)	
+		if Input.is_action_just_released("ui_down"):
+			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", false)
 		
-	if Input.is_action_just_pressed("ui_down"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", true)	
-	if Input.is_action_just_released("ui_down"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", false)	
+	
 
 func client_connected_ok():
 	print("client connected!")
@@ -146,6 +161,7 @@ remote func mobload(mobs):
 remote func player_joined(id, info):
 	print("Player joined: " + str(id))
 	
+	
 	var node_player = cached_player.instance()
 	info.node = node_player
 	info.updates = {}
@@ -153,6 +169,16 @@ remote func player_joined(id, info):
 	var pos = Vector2(info.position.x, info.position.y)
 	node_player.set_position(pos)
 	node_player.name = info.name
+	
+	# If the player is the current player, attach our Camera2D object to it
+	if id == get_tree().get_network_unique_id():
+		var playerCamera = Camera2D.new()
+		playerCamera.make_current()
+		node_player.add_child(playerCamera)
+		
+		
+		
+		
 	
 	node_players.add_child(node_player)
 	

@@ -63,14 +63,14 @@ animations = [ {
 "name": "run",
 "speed": 12.0
 }, {
-"frames": [ ExtResource( 42 ), ExtResource( 28 ), ExtResource( 32 ), ExtResource( 29 ), ExtResource( 37 ), ExtResource( 30 ), ExtResource( 21 ), ExtResource( 22 ) ],
-"loop": true,
-"name": "attack2",
-"speed": 12.0
-}, {
 "frames": [ ExtResource( 44 ), ExtResource( 33 ), ExtResource( 17 ), ExtResource( 23 ), ExtResource( 34 ), ExtResource( 35 ), ExtResource( 38 ), ExtResource( 25 ) ],
 "loop": true,
 "name": "hurt",
+"speed": 12.0
+}, {
+"frames": [ ExtResource( 42 ), ExtResource( 28 ), ExtResource( 32 ), ExtResource( 29 ), ExtResource( 37 ), ExtResource( 30 ), ExtResource( 21 ), ExtResource( 22 ) ],
+"loop": true,
+"name": "attack2",
 "speed": 12.0
 } ]
 
@@ -86,7 +86,7 @@ script = ExtResource( 45 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 1 )
 animation = "idle"
-frame = 7
+frame = 5
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

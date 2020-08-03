@@ -5,7 +5,12 @@ var currentHealth = 10
 
 var velocity = Vector2()
 
-
+# Take hit is separate from take_damage. Take_damage is done only
+# once the server verifies the hit. take_hit simply animates the attack
+func take_hit():
+	pass
+	
+	
 func take_damage(amount):
 	currentHealth -= amount
 	if currentHealth < 0:
