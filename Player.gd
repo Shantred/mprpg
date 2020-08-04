@@ -16,10 +16,11 @@ func _ready():
 	
 	
 func _physics_process(delta):
-	if velocity.length() > 0:
-		$AnimatedSprite.play("run")
-	else:
-		$AnimatedSprite.play("idle")
+	if (!is_attacking):
+		if velocity.length() > 0:
+			$AnimatedSprite.play("run")
+		else:
+			$AnimatedSprite.play("idle")
 	$AnimatedSprite.flip_h = velocity.x < 0
 	
 	
@@ -124,7 +125,7 @@ func is_attacking():
 	
 func _on_AnimatedSprite_animation_finished():
 	if $AnimatedSprite.animation == "attack":
-		print("Done attacking")
+		$AnimatedSprite.play("idle")
 		is_attacking = false
 
 

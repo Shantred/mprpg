@@ -65,36 +65,38 @@ func _process(delta):
 	var playerId = get_tree().get_network_unique_id()
 	var player = players[playerId].node
 	
-	# Simple movement for now, no prediction. Just tell the server we are currently moving.
+	
 	# When attacking, client-side we perform the attack immediately and do a raycast
 	# to see if we do damage. We use this ONLY to trigger animations on the attacked
 	# entity.
-	
 	if !player.is_attacking():
 		if Input.is_action_pressed("ui_select"):
 			player.attack()
+			rpc_id(1, "player_attack", get_tree().get_network_unique_id())
 			
-		
-		if Input.is_action_just_pressed("ui_right"):
-			print("Sending command to go right!")
-			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", true)	
-		if Input.is_action_just_released("ui_right"):
-			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", false)
 	
-		if Input.is_action_just_pressed("ui_left"):
-			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "left", true)	
-		if Input.is_action_just_released("ui_left"):
-			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "left", false)
 			
-		if Input.is_action_just_pressed("ui_up"):
-			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "up", true)	
-		if Input.is_action_just_released("ui_up"):
-			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "up", false)
-			
-		if Input.is_action_just_pressed("ui_down"):
-			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", true)	
-		if Input.is_action_just_released("ui_down"):
-			rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", false)
+	# Simple movement for now, no prediction. Just tell the server we are currently moving.
+	if Input.is_action_just_pressed("ui_right"):
+		print("Sending command to go right!")
+		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", true)	
+	if Input.is_action_just_released("ui_right"):
+		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", false)
+
+	if Input.is_action_just_pressed("ui_left"):
+		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "left", true)	
+	if Input.is_action_just_released("ui_left"):
+		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "left", false)
+		
+	if Input.is_action_just_pressed("ui_up"):
+		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "up", true)	
+	if Input.is_action_just_released("ui_up"):
+		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "up", false)
+		
+	if Input.is_action_just_pressed("ui_down"):
+		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", true)	
+	if Input.is_action_just_released("ui_down"):
+		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", false)
 		
 	
 

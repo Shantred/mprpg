@@ -97,16 +97,23 @@ remote func register_player(id, info):
 remote func mobload(mobs):
 	pass
 	
-remote func player_input(id, key, pressed):
-	print("Player " + str(id) + " pressed " + key)
-	if key == "left":
-		players[id].velocity.x = -1 if pressed else 0
-	if key == "right":
-		players[id].velocity.x = 1 if pressed else 0
-	if key == "up":
-		players[id].velocity.y = -1 if pressed else 0
-	if key == "down":
-		players[id].velocity.y = 1 if pressed else 0	
+remote func player_input(id, key, pressed):	
+	if !players[id].node.is_attacking():
+		if key == "left":
+			players[id].velocity.x = -1 if pressed else 0
+		if key == "right":
+			players[id].velocity.x = 1 if pressed else 0
+		if key == "up":
+			players[id].velocity.y = -1 if pressed else 0
+		if key == "down":
+			players[id].velocity.y = 1 if pressed else 0
+		
+remote func player_attack(id):
+	print("Player attack")
+	# Make sure we don't trigger an attack twice in a row.
+	if !players[id].node.is_attacking():
+		print("Player attacking")
+		players[id].node.attack()
 		
 func get_spawn_position():
 	var pos = Vector2(0,0)
@@ -116,12 +123,15 @@ func get_spawn_position():
 	
 func _physics_process(delta):
 	for peerId in players:
-		players[peerId].position = players[peerId].node.get_position()
-		var velocity = players[peerId].velocity;
-		if velocity.length() > 0:
-			velocity = velocity.normalized() * 400
-			players[peerId].velocity = velocity
-			players[peerId].node.move_and_collide(velocity * delta)
+		
+		# Do not update position if player is currently attacking
+		if !players[peerId].node.is_attacking():
+			players[peerId].position = players[peerId].node.get_position()
+			var velocity = players[peerId].velocity;
+			if velocity.length() > 0:
+				velocity = velocity.normalized() * 400
+				players[peerId].velocity = velocity
+				players[peerId].node.move_and_collide(velocity * delta)
 			
 	delta_update += delta
 	while delta_update >= delta_interval:
