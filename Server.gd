@@ -21,6 +21,7 @@ onready var camera = $Camera2D
 onready var world_node = $world
 onready var node_players = $world/players
 onready var node_mobs = $world/mobs
+onready var server_camera = $world/ServerCam
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -121,7 +122,7 @@ func get_spawn_position():
 	pos.x = rand_range(0, 500)
 	pos.y = rand_range(0, 500)
 	return pos
-	
+
 func _physics_process(delta):
 	for peerId in players:
 		
@@ -138,6 +139,24 @@ func _physics_process(delta):
 	while delta_update >= delta_interval:
 		delta_update -= delta_interval
 		broadcast_world_positions()
+		
+	# Controls for the server camera. Remove once no longer needed.
+	var camera_velocity = Vector2()
+	if Input.is_action_pressed("ui_right"):
+		camera_velocity.x += 1
+
+	if Input.is_action_pressed("ui_left"):
+		camera_velocity.x -= 1
+		
+	if Input.is_action_pressed("ui_up"):
+		camera_velocity.y -= 1
+		
+	if Input.is_action_pressed("ui_down"):
+		camera_velocity.y += 1
+		
+	if camera_velocity.length() > 0:
+		camera_velocity = camera_velocity.normalized() * 800
+		server_camera.move_and_collide(camera_velocity * delta)
 			
 			
 func broadcast_world_positions():

@@ -5,6 +5,9 @@ var currentHealth = 10
 
 var velocity = Vector2()
 
+var area_radius = 400
+var is_dead = false
+
 # Take hit is separate from take_damage. Take_damage is done only
 # once the server verifies the hit. take_hit simply animates the attack
 func take_hit():
@@ -13,9 +16,17 @@ func take_hit():
 	
 func set_health(health):
 	currentHealth = health
+	
+	# Handles revive client-side
+	if is_dead && currentHealth > 0:
+		client_revive()
+	
 	if currentHealth < 0:
 		currentHealth = 0
-		on_death()
+	
+	if currentHealth == 0 && !is_dead:
+		client_death()
+		
 		
 	get_node("Healthbar").SetHealth(currentHealth)
 	
@@ -23,9 +34,36 @@ func take_damage(amount):
 	currentHealth -= amount
 	if currentHealth < 0:
 		currentHealth = 0;
+	
+	if currentHealth == 0:
 		on_death()
 		
 	get_node("Healthbar").SetHealth(currentHealth)
+	
+func client_death():
+	print("Mob died")
+	is_dead = true
+	$AnimationPlayer.stop()
+	$AnimationPlayer.play("death")
+	$CollisionShape2D.disabled = true
+	$Healthbar.hide()
+	
+	# Show corpse for 2 seconds before hiding it
+	yield(get_tree().create_timer(2), "timeout")
+	hide()
+	
+	
+	
+func client_revive():
+	print("mob revived")
+	is_dead = false
+	$Healthbar.SetHealth(currentHealth)
+	$Healthbar.show()
+	show()
+	$AnimationPlayer.stop()
+	$AnimationPlayer.play("Idle")
+	$CollisionShape2D.disabled = false
+	
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -44,9 +82,9 @@ func on_death():
 	hide()
 	
 	# Get new position from spawner. We do this now while the collider is disabled
-	var spawner = get_parent()
-	position = spawner.get_random_position(spawner.AreaRadius)
-	print("Spawn radius is : " + str(spawner.AreaRadius))
+	position = get_random_position(area_radius)
+	
+	is_dead = true
 	
 func respawn():	
 	print("Respawning")
@@ -72,3 +110,18 @@ func collide():
 	
 func test():
 	return "test success!"
+	
+func get_random_position(radius):
+	print("Getting random position")
+	var x1 = rand_range(-1, 1)
+	var x2 = rand_range(-1, 1)
+	while x1*x1 + x2*x2 >= 1:
+		x1 = rand_range(-1, 1)
+		x2 = rand_range(-1, 1)
+		
+	var random_position = Vector2(
+		2 * x1 * sqrt (1 - x1*x1 - x2*x2),
+		2 * x2 * sqrt (1 - x1*x1 - x2*x2)
+	)
+	
+	return random_position * rand_range(0, radius)

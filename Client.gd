@@ -144,10 +144,9 @@ remote func mu(updateId, mobId, pos, vel, currentHealth):
 	#print(str(mobs))
 	# Mobs must be loaded before we can accept an update
 	if (mobs.size() > 0):
-		print("Received update on mob " + str(mobId))
-		print(str(mobs))
 		
 		mobs[mobId].position = pos
+		mobs[mobId].node.position = pos
 		mobs[mobId].velocity = vel
 		mobs[mobId].node.set_health(currentHealth)
 		
