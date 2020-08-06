@@ -98,25 +98,35 @@ func attack():
 		
 		# We base the distance of our raycasts on the width of the base sprite.
 		# For animated sprites, that means the first frame of idle.
-		if facing_direction == "right":
+		if velocity.x > 0:
 			# We cast a full sprite width to the right. This creates a cast that is actually half a player distance
 			# away because the ray should be cast from the center of the sprite.
 			ray_vector.x = position.x + hit_distance
 			ray_vector.y = position.y
-		elif facing_direction == "left":
+		elif velocity.x < 0:
 			ray_vector.x = 	position.x - hit_distance
 			ray_vector.y = position.y
-		elif facing_direction == "up":
+		elif velocity.y < 0:
 			ray_vector.x = position.x
 			ray_vector.y = position.y - hit_distance
-		elif facing_direction == "down":
+		elif velocity.y > 0:
 			ray_vector.x = position.x
 			ray_vector.y = position.y + hit_distance
+		else:
+			print("No direction to attack found");
+			# Default to attacking from the right.
+			ray_vector.x = position.x + hit_distance
+			ray_vector.y = position.y
+			
+			# TODO: Use a facing_direction that is preserved based on last movement
 
 
 		var results = space_state.intersect_ray(Vector2(position.x, position.y), ray_vector, [self])
 		if results:
 			results.collider.take_hit()
+			return results
+		else:
+			return false
 		
 		
 	

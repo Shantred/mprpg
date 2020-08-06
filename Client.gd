@@ -32,6 +32,8 @@ func _ready():
 		print("Unable to connect signal (server_disconnected) !")
 		
 func _process(delta):
+	#print("Mob update:")
+	#print(str(mobs))
 	# To mitigate latency issues we use interpolation. The idea is simple, we receive
 	# position updates every TICK_DURATION (50 ms, 20 per seconds). We interpolate between
 	# the last two previous updates, this way we always have smooth movements. The
@@ -78,7 +80,6 @@ func _process(delta):
 			
 	# Simple movement for now, no prediction. Just tell the server we are currently moving.
 	if Input.is_action_just_pressed("ui_right"):
-		print("Sending command to go right!")
 		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", true)	
 	if Input.is_action_just_released("ui_right"):
 		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", false)
@@ -138,7 +139,9 @@ remote func pu(id, updateId, pos, velocity):
 		players[id].updates.erase(players[id].updates.keys()[0])
 		
 
-remote func mu(updateId, mobId, pos, vel):
+remote func mu(updateId, mobId, pos, vel, currentHealth):
+	#print("Received update on mob: " + str(mobId) + "but size is " + str(mobs.size()))
+	#print(str(mobs))
 	# Mobs must be loaded before we can accept an update
 	if (mobs.size() > 0):
 		print("Received update on mob " + str(mobId))
@@ -146,19 +149,28 @@ remote func mu(updateId, mobId, pos, vel):
 		
 		mobs[mobId].position = pos
 		mobs[mobId].velocity = vel
+		mobs[mobId].node.set_health(currentHealth)
+		
 	
-remote func mobload(mobs):
-	print(str(mobs))
-	print(mobs)
-	for mob in mobs:
+remote func mobload(mobsFromServer):
+	print(str(mobsFromServer))
+	for mob in mobsFromServer:
 		var node_enemy = cached_woe.instance()
-		mobs[mob].node = node_enemy
-		node_enemy.set_position(mobs[mob].position)
+		var enemy = {}
+		enemy.position = mobsFromServer[mob].position
+		enemy.node = node_enemy
+		
+		mobs[mob] = enemy
+		
+		node_enemy.set_position(mobsFromServer[mob].position)
 		node_enemy.show()
 		node_enemy.set_process(true)
 
 	
 		$world.add_child(node_enemy)
+		
+	print("finished loading mobs:")
+	print(str(mobs))
 		
 remote func player_joined(id, info):
 	print("Player joined: " + str(id))

@@ -94,9 +94,6 @@ remote func register_player(id, info):
 		rpc_id(peerId, "player_joined", id, players[id])
 	
 	
-remote func mobload(mobs):
-	pass
-	
 remote func player_input(id, key, pressed):	
 	if !players[id].node.is_attacking():
 		if key == "left":
@@ -113,7 +110,11 @@ remote func player_attack(id):
 	# Make sure we don't trigger an attack twice in a row.
 	if !players[id].node.is_attacking():
 		print("Player attacking")
-		players[id].node.attack()
+		var results = players[id].node.attack()
+		if results:
+			print("Player hit!")
+			print(str(results.collider))
+			results.collider.take_damage(3)
 		
 func get_spawn_position():
 	var pos = Vector2(0,0)
@@ -150,7 +151,7 @@ func broadcast_world_positions():
 	var mobs = world_node.get_mobs()
 	
 	for mob in mobs:
-		rpc_unreliable("mu", updateId, mob, mobs[mob].node.position, mobs[mob].node.velocity)
+		rpc_unreliable("mu", updateId, mob, mobs[mob].node.position, mobs[mob].node.velocity, mobs[mob].node.currentHealth)
 	
 			
 	updateId += 1

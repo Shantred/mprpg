@@ -11,6 +11,14 @@ func take_hit():
 	pass
 	
 	
+func set_health(health):
+	currentHealth = health
+	if currentHealth < 0:
+		currentHealth = 0
+		on_death()
+		
+	get_node("Healthbar").SetHealth(currentHealth)
+	
 func take_damage(amount):
 	currentHealth -= amount
 	if currentHealth < 0:
