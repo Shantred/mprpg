@@ -63,14 +63,14 @@ animations = [ {
 "name": "attack2",
 "speed": 12.0
 }, {
-"frames": [ ExtResource( 44 ), ExtResource( 33 ), ExtResource( 17 ), ExtResource( 23 ), ExtResource( 34 ), ExtResource( 35 ), ExtResource( 38 ), ExtResource( 25 ) ],
-"loop": true,
-"name": "hurt",
-"speed": 12.0
-}, {
 "frames": [ ExtResource( 39 ), ExtResource( 18 ), ExtResource( 20 ), ExtResource( 40 ), ExtResource( 36 ), ExtResource( 15 ), ExtResource( 41 ), ExtResource( 43 ) ],
 "loop": true,
 "name": "run",
+"speed": 12.0
+}, {
+"frames": [ ExtResource( 44 ), ExtResource( 33 ), ExtResource( 17 ), ExtResource( 23 ), ExtResource( 34 ), ExtResource( 35 ), ExtResource( 38 ), ExtResource( 25 ) ],
+"loop": true,
+"name": "hurt",
 "speed": 12.0
 } ]
 

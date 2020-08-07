@@ -21,7 +21,7 @@ func _physics_process(delta):
 			$AnimatedSprite.play("run")
 		else:
 			$AnimatedSprite.play("idle")
-	$AnimatedSprite.flip_h = velocity.x < 0
+	
 	
 	
 
@@ -98,18 +98,18 @@ func attack():
 		
 		# We base the distance of our raycasts on the width of the base sprite.
 		# For animated sprites, that means the first frame of idle.
-		if velocity.x > 0:
+		if facing_direction == "right":
 			# We cast a full sprite width to the right. This creates a cast that is actually half a player distance
 			# away because the ray should be cast from the center of the sprite.
 			ray_vector.x = position.x + hit_distance
 			ray_vector.y = position.y
-		elif velocity.x < 0:
+		elif facing_direction == "left":
 			ray_vector.x = 	position.x - hit_distance
 			ray_vector.y = position.y
-		elif velocity.y < 0:
+		elif facing_direction == "up":
 			ray_vector.x = position.x
 			ray_vector.y = position.y - hit_distance
-		elif velocity.y > 0:
+		elif facing_direction == "down":
 			ray_vector.x = position.x
 			ray_vector.y = position.y + hit_distance
 		else:
@@ -138,4 +138,19 @@ func _on_AnimatedSprite_animation_finished():
 		$AnimatedSprite.play("idle")
 		is_attacking = false
 
-
+func set_direction(vel):
+	# facing direction is different than the sprite flip position for now
+	# because we don't have back and front animations.
+	# We also have this as a separate value because we need to know where to raycast
+	# which may not be obvious if, say, the velocity value is 0
+	if vel.x > 0:
+		facing_direction = "right"
+	elif vel.x < 0:
+		facing_direction = "left"
+	elif vel.y > 0:
+		facing_direction = "down"
+	elif vel.y < 0:
+		facing_direction = "up"
+		
+	$AnimatedSprite.flip_h = velocity.x < 0
+	

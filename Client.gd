@@ -60,6 +60,13 @@ func _process(delta):
 	
 				players[peerId].velocity = lerp(players[peerId].updates[keys[i-1]].velocity, players[peerId].updates[keys[i]].velocity, percent)
 				players[peerId].node.velocity = players[peerId].velocity
+				
+				# We need to update the direction that the player is facing
+				# We only need to do this if velocity is greater than 0. Updating
+				# this way preserves facing direction even while not moving
+				if players[peerId].velocity.x != 0:
+					players[peerId].node.set_direction(players[peerId].velocity)
+				
 				break
 				
 				
@@ -188,9 +195,6 @@ remote func player_joined(id, info):
 		var playerCamera = Camera2D.new()
 		playerCamera.make_current()
 		node_player.add_child(playerCamera)
-		
-		
-		
 		
 	
 	node_players.add_child(node_player)

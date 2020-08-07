@@ -21,6 +21,7 @@ position = Vector2( 83.7444, 190.652 )
 position = Vector2( 256.579, 144.326 )
 
 [node name="ServerCam" parent="world" instance=ExtResource( 4 )]
+collision_layer = 524288
 
 [node name="Camera2D" type="Camera2D" parent="world/ServerCam"]
 current = true

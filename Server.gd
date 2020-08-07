@@ -17,7 +17,6 @@ var cached_client = load("res://Client.tscn")
 var updateId = 0
 
 
-onready var camera = $Camera2D
 onready var world_node = $world
 onready var node_players = $world/players
 onready var node_mobs = $world/mobs
@@ -106,11 +105,15 @@ remote func player_input(id, key, pressed):
 		if key == "down":
 			players[id].velocity.y = 1 if pressed else 0
 		
+		players[id].node.set_direction(players[id].velocity)
+		
 remote func player_attack(id):
 	print("Player attack")
 	# Make sure we don't trigger an attack twice in a row.
 	if !players[id].node.is_attacking():
 		print("Player attacking")
+		# Reset velocity to prevent unintended movement after attacks
+		players[id].velocity = Vector2()
 		var results = players[id].node.attack()
 		if results:
 			print("Player hit!")
