@@ -7,6 +7,10 @@ var cached_player = load("res://Player.tscn")
 var cached_woe = load("res://WallOfEYes.tscn")
 var my_peer = null
 var my_info = { name = "teent" }
+var movement_update_id = 0
+
+var delta_update = 0
+var delta_interval = float(50 * 0.001)
 
 onready var node_players = $world/players
 onready var world_mobs = $world/mobs
@@ -42,36 +46,39 @@ func _process(delta):
 	var target_timestamp = OS.get_ticks_msec() - (50 * 2)
 	#print("Target timestamp: (" + str(target_timestamp) + ")")
 	
-	for peerId in players:
-		var keys = players[peerId].updates.keys()
-		#print("There are " + str(keys.size()) + " keys")
-		for i in range(0, keys.size()):
-			#print("Current key: " + str(keys[i]))
-			if keys[i] > target_timestamp:
-				#print("Key is greater than the target timestamp")
-				
-				var percent = float(target_timestamp - keys[i-1]) / 50
-				
-				players[peerId].position.x = lerp(players[peerId].updates[keys[i-1]].position.x, players[peerId].updates[keys[i]].position.x, percent)
-				players[peerId].position.y = lerp(players[peerId].updates[keys[i-1]].position.y, players[peerId].updates[keys[i]].position.y, percent)
-				#if peerId == get_tree().get_network_unique_id():
-					#print("moving me to X:" + str(players[peerId].position.x) + " Y: " + str(players[peerId].position.y))
-				players[peerId].node.set_position(players[peerId].position)
+	var playerId = get_tree().get_network_unique_id()
 	
-				players[peerId].velocity = lerp(players[peerId].updates[keys[i-1]].velocity, players[peerId].updates[keys[i]].velocity, percent)
-				players[peerId].node.velocity = players[peerId].velocity
-				
-				# We need to update the direction that the player is facing
-				# We only need to do this if velocity is greater than 0. Updating
-				# this way preserves facing direction even while not moving
-				if players[peerId].velocity.x != 0:
-					players[peerId].node.set_direction(players[peerId].velocity)
-				
-				break
+	for peerId in players:
+		# We do not want to lerp the current player's movement, just remote players.
+		if peerId != playerId:
+			var keys = players[peerId].updates.keys()
+			#print("There are " + str(keys.size()) + " keys")
+			for i in range(0, keys.size()):
+				#print("Current key: " + str(keys[i]))
+				if keys[i] > target_timestamp:
+					#print("Key is greater than the target timestamp")
+					
+					var percent = float(target_timestamp - keys[i-1]) / 50
+					
+					players[peerId].position.x = lerp(players[peerId].updates[keys[i-1]].position.x, players[peerId].updates[keys[i]].position.x, percent)
+					players[peerId].position.y = lerp(players[peerId].updates[keys[i-1]].position.y, players[peerId].updates[keys[i]].position.y, percent)
+					#if peerId == get_tree().get_network_unique_id():
+						#print("moving me to X:" + str(players[peerId].position.x) + " Y: " + str(players[peerId].position.y))
+					players[peerId].node.set_position(players[peerId].position)
+		
+					players[peerId].velocity = lerp(players[peerId].updates[keys[i-1]].velocity, players[peerId].updates[keys[i]].velocity, percent)
+					players[peerId].node.velocity = players[peerId].velocity
+					
+					# We need to update the direction that the player is facing
+					# We only need to do this if velocity is greater than 0. Updating
+					# this way preserves facing direction even while not moving
+					if players[peerId].velocity.x != 0:
+						players[peerId].node.set_direction(players[peerId].velocity)
+					
+					break
 				
 				
 	# Handle actions for the current user
-	var playerId = get_tree().get_network_unique_id()
 	var player = players[playerId].node
 	
 	
@@ -86,27 +93,62 @@ func _process(delta):
 	
 			
 	# Simple movement for now, no prediction. Just tell the server we are currently moving.
-	if Input.is_action_just_pressed("ui_right"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", true)	
-	if Input.is_action_just_released("ui_right"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", false)
-
-	if Input.is_action_just_pressed("ui_left"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "left", true)	
-	if Input.is_action_just_released("ui_left"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "left", false)
-		
-	if Input.is_action_just_pressed("ui_up"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "up", true)	
-	if Input.is_action_just_released("ui_up"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "up", false)
-		
-	if Input.is_action_just_pressed("ui_down"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", true)	
-	if Input.is_action_just_released("ui_down"):
-		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", false)
+#	if Input.is_action_just_pressed("ui_right"):
+#		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", true)
+#	if Input.is_action_just_released("ui_right"):
+#		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "right", false)
+#
+#	if Input.is_action_just_pressed("ui_left"):
+#		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "left", true)	
+#	if Input.is_action_just_released("ui_left"):
+#		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "left", false)
+#
+#	if Input.is_action_just_pressed("ui_up"):
+#		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "up", true)	
+#	if Input.is_action_just_released("ui_up"):
+#		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "up", false)
+#
+#	if Input.is_action_just_pressed("ui_down"):
+#		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", true)	
+#	if Input.is_action_just_released("ui_down"):
+#		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", false)
 		
 	
+	delta_update += delta
+	while delta_update >= delta_interval:
+		delta_update -= delta_interval
+		broadcast_player_position(player.position)
+		
+		
+func _physics_process(delta):
+	var playerId = get_tree().get_network_unique_id()
+	var player = players[playerId].node
+	
+	player.velocity = Vector2()
+	
+	if Input.is_action_pressed("ui_right"):
+		player.velocity.x = 1
+	if Input.is_action_pressed("ui_left"):
+		player.velocity.x = -1
+	if Input.is_action_pressed("ui_down"):
+		player.velocity.y = 1
+	if Input.is_action_pressed("ui_up"):
+		player.velocity.y = -1
+		
+	if player.velocity.x != 0:
+		player.set_direction(player.velocity)
+	
+	if player.velocity.length() > 0:
+		player.velocity = player.velocity.normalized() * 400
+		print(str(player.velocity.normalized() * 400))
+		print("position before: " + str(player.position))
+		print("delta: " + str(delta))
+		print("collide param:" + str(player.velocity * delta))
+		var previousPosition = player.position
+		player.move_and_collide(player.velocity * delta)
+		var afterMoveAndCollide = player.position
+		print("position after: " + str(player.position))
+		print("distance moved:" + str(previousPosition.distance_to(afterMoveAndCollide)))
 
 func client_connected_ok():
 	print("client connected!")
@@ -206,3 +248,8 @@ remote func player_leaving(id):
 	print("Callback: player_leaving(" + str(id)+")")
 	players[id].node.queue_free()
 	players.erase(id)
+	
+#ppu - player position update
+func broadcast_player_position(pos):
+	rpc_id(1, "ppu", get_tree().get_network_unique_id(), pos, movement_update_id)
+	movement_update_id += 1

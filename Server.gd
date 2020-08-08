@@ -74,6 +74,9 @@ remote func register_player(id, info):
 	
 	var node_player = cached_player.instance()
 	info.node = node_player
+	info.player_update_id = 0
+	info.last_update_time = 0
+	info.updates = {}
 	
 	var pos = Vector2(info.position.x, info.position.y)
 	
@@ -132,7 +135,7 @@ func _physics_process(delta):
 		# Do not update position if player is currently attacking
 		if !players[peerId].node.is_attacking():
 			players[peerId].position = players[peerId].node.get_position()
-			var velocity = players[peerId].velocity;
+			var velocity = players[peerId].velocity
 			if velocity.length() > 0:
 				velocity = velocity.normalized() * 400
 				players[peerId].velocity = velocity
@@ -177,3 +180,33 @@ func broadcast_world_positions():
 	
 			
 	updateId += 1
+	
+remote func ppu(playerId, pos, updateId):
+	#print("Received update about " + str(playerId) + " update: " + str(updateId))
+	if updateId > players[playerId].player_update_id:
+		# Just take the player positions. We can trust them, right?
+		# TODO: Track time since last update so that we can calculate expected max distance
+		var lastUpdateTime = OS.get_ticks_msec()
+		
+		
+		# Calculate the time since the last update so we can attempt to calculate how far they
+		# should be able to have moved
+		var timeSinceLastUpdate = lastUpdateTime - players[playerId].last_update_time
+		
+		# There's probably a better way to do this, but I'm dumb. Convert miliseconds to seconds
+		# because that's how I know to calculate max distance.
+		var tldMili = float(timeSinceLastUpdate) / float(1000.0)
+		# calculate max movable distance
+		print("Time since last update: " + str(timeSinceLastUpdate))
+		var maxDistance = 400 * tldMili
+		print("Maximum distance possible: " + str(maxDistance))
+		
+		players[playerId].node.position = pos
+		players[playerId].updates[lastUpdateTime] = { position = pos }
+		players[playerId].player_update_id = updateId
+		players[playerId].last_update_time = lastUpdateTime
+		
+		# Only keep the last 10 updates
+		while len(players[playerId].updates) > 10:
+			#print("Deleting keys")
+			players[playerId].updates.erase(players[playerId].updates.keys()[0])
