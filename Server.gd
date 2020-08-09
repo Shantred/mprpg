@@ -58,6 +58,7 @@ func player_disconnected(id):
 		
 	players[id].node.queue_free()
 	players[id].erase(id)
+	players.erase(id)
 	
 	
 remote func register_player(id, info):
@@ -77,6 +78,7 @@ remote func register_player(id, info):
 	info.player_update_id = 0
 	info.last_update_time = 0
 	info.updates = {}
+	info.position_corrects = 0 # used to track qty of invalid positions
 	
 	var pos = Vector2(info.position.x, info.position.y)
 	
@@ -111,17 +113,16 @@ remote func player_input(id, key, pressed):
 		players[id].node.set_direction(players[id].velocity)
 		
 remote func player_attack(id):
-	print("Player attack")
 	# Make sure we don't trigger an attack twice in a row.
 	if !players[id].node.is_attacking():
-		print("Player attacking")
 		# Reset velocity to prevent unintended movement after attacks
 		players[id].velocity = Vector2()
 		var results = players[id].node.attack()
 		if results:
-			print("Player hit!")
-			print(str(results.collider))
-			results.collider.take_damage(3)
+			#print("Attacked: " + str(results.collider))
+			if results.collider.has_method("take_damage"):
+				#print("Doing damage to target")
+				results.collider.take_damage(players[id].node.get_damage())
 		
 func get_spawn_position():
 	var pos = Vector2(0,0)
@@ -171,7 +172,7 @@ func broadcast_world_positions():
 		for peerId2 in players:
 			#print("player " + str(peerId2) + " position X: " + str(players[peerId2].position.x) + " Y: " + str(players[peerId2].position.y))
 			#print("player " + str(peerId2) + " position X: " + str(players[peerId2].node.position.x) + " Y: " + str(players[peerId2].node.position.y))
-			rpc_unreliable_id(peerId, "pu", peerId2, updateId, players[peerId2].node.position, players[peerId2].velocity)
+			rpc_unreliable_id(peerId, "pu", peerId2, updateId, players[peerId2].node.position, players[peerId2].velocity, players[peerId2].node.current_health)
 	
 	var mobs = world_node.get_mobs()
 	
@@ -181,11 +182,9 @@ func broadcast_world_positions():
 			
 	updateId += 1
 	
-remote func ppu(playerId, pos, updateId):
+remote func ppu(playerId, pos, vel, updateId):
 	#print("Received update about " + str(playerId) + " update: " + str(updateId))
 	if updateId > players[playerId].player_update_id:
-		# Just take the player positions. We can trust them, right?
-		# TODO: Track time since last update so that we can calculate expected max distance
 		var lastUpdateTime = OS.get_ticks_msec()
 		
 		
@@ -197,15 +196,39 @@ remote func ppu(playerId, pos, updateId):
 		# because that's how I know to calculate max distance.
 		var tldMili = float(timeSinceLastUpdate) / float(1000.0)
 		# calculate max movable distance
-		print("Time since last update: " + str(timeSinceLastUpdate))
+		#print("Time since last update: " + str(timeSinceLastUpdate))
 		var maxDistance = 400 * tldMili
-		print("Maximum distance possible: " + str(maxDistance))
+		#print("Maximum distance possible: " + str(maxDistance))
 		
-		players[playerId].node.position = pos
-		players[playerId].updates[lastUpdateTime] = { position = pos }
-		players[playerId].player_update_id = updateId
-		players[playerId].last_update_time = lastUpdateTime
-		
+		# Get last update
+		var lastUpdateKey = players[playerId].updates.values().back()
+		if lastUpdateKey != null:
+			var lastUpdatePosition = lastUpdateKey.position
+			var distanceSinceLastUpdate = lastUpdatePosition.distance_to(pos)
+			print("Max distance: " + str(maxDistance) + " distanceSinceLastUpdate: " + str(distanceSinceLastUpdate))
+			
+			# If the player has gone too far, set them to the last known valid position
+			if (distanceSinceLastUpdate > maxDistance + 15):
+				players[playerId].position_corrects += 1
+				if (players[playerId].position_corrects > 3):
+					get_tree().diconnect_peer(playerId)
+					return
+				else:
+					rpc_id(playerId, "cpp", lastUpdatePosition)
+			
+			players[playerId].node.position = pos
+			players[playerId].updates[lastUpdateTime] = { position = pos }
+			players[playerId].player_update_id = updateId
+			players[playerId].last_update_time = lastUpdateTime
+		else:
+			# No updates yet, we should be able to trust the first
+			players[playerId].node.position = pos
+			players[playerId].updates[lastUpdateTime] = { position = pos }
+			players[playerId].player_update_id = updateId
+			players[playerId].last_update_time = lastUpdateTime
+			
+		players[playerId].node.set_direction(vel)
+			
 		# Only keep the last 10 updates
 		while len(players[playerId].updates) > 10:
 			#print("Deleting keys")

@@ -13,6 +13,7 @@ var is_dead = false
 func take_hit():
 	pass
 	
+
 	
 func set_health(health):
 	currentHealth = health

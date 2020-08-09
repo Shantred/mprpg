@@ -49,15 +49,16 @@ func _process(delta):
 	var playerId = get_tree().get_network_unique_id()
 	
 	for peerId in players:
-		# We do not want to lerp the current player's movement, just remote players.
-		if peerId != playerId:
-			var keys = players[peerId].updates.keys()
-			#print("There are " + str(keys.size()) + " keys")
-			for i in range(0, keys.size()):
-				#print("Current key: " + str(keys[i]))
-				if keys[i] > target_timestamp:
-					#print("Key is greater than the target timestamp")
-					
+		
+		
+		var keys = players[peerId].updates.keys()
+		#print("There are " + str(keys.size()) + " keys")
+		for i in range(0, keys.size()):
+			#print("Current key: " + str(keys[i]))
+			if keys[i] > target_timestamp:
+				#print("Key is greater than the target timestamp")
+				# We do not want to lerp the current player's movement, just remote players.
+				if peerId != playerId:
 					var percent = float(target_timestamp - keys[i-1]) / 50
 					
 					players[peerId].position.x = lerp(players[peerId].updates[keys[i-1]].position.x, players[peerId].updates[keys[i]].position.x, percent)
@@ -75,7 +76,9 @@ func _process(delta):
 					if players[peerId].velocity.x != 0:
 						players[peerId].node.set_direction(players[peerId].velocity)
 					
-					break
+				players[peerId].node.set_health(players[peerId].updates[keys[i]].health)
+				
+				break
 				
 				
 	# Handle actions for the current user
@@ -113,11 +116,6 @@ func _process(delta):
 #	if Input.is_action_just_released("ui_down"):
 #		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", false)
 		
-	
-	delta_update += delta
-	while delta_update >= delta_interval:
-		delta_update -= delta_interval
-		broadcast_player_position(player.position)
 		
 		
 func _physics_process(delta):
@@ -140,15 +138,20 @@ func _physics_process(delta):
 	
 	if player.velocity.length() > 0:
 		player.velocity = player.velocity.normalized() * 400
-		print(str(player.velocity.normalized() * 400))
-		print("position before: " + str(player.position))
-		print("delta: " + str(delta))
-		print("collide param:" + str(player.velocity * delta))
+		#print(str(player.velocity.normalized() * 400))
+		#print("position before: " + str(player.position))
+		#print("delta: " + str(delta))
+		#print("collide param:" + str(player.velocity * delta))
 		var previousPosition = player.position
 		player.move_and_collide(player.velocity * delta)
 		var afterMoveAndCollide = player.position
-		print("position after: " + str(player.position))
-		print("distance moved:" + str(previousPosition.distance_to(afterMoveAndCollide)))
+		#print("position after: " + str(player.position))
+		#print("distance moved:" + str(previousPosition.distance_to(afterMoveAndCollide)))
+		
+	delta_update += delta
+	while delta_update >= delta_interval:
+		delta_update -= delta_interval
+		broadcast_player_position(player.position, player.velocity)
 
 func client_connected_ok():
 	print("client connected!")
@@ -171,7 +174,7 @@ func client_connected_fail():
 		
 # Player update
 # Named "pu" to lower bandwidth. 
-remote func pu(id, updateId, pos, velocity):
+remote func pu(id, updateId, pos, velocity, health):
 	# Updates are sent as unreliable rpcs. Since they can be sent in an arbitrary order, discard if it's not the
 	# newest update
 	if updateId < last_update:
@@ -179,7 +182,7 @@ remote func pu(id, updateId, pos, velocity):
 		return
 		
 	last_update = updateId
-	players[id].updates[OS.get_ticks_msec()] = { position = pos, velocity = velocity }
+	players[id].updates[OS.get_ticks_msec()] = { position = pos, velocity = velocity, health = health }
 	
 	
 	# Only keep the last 10 updates
@@ -250,6 +253,10 @@ remote func player_leaving(id):
 	players.erase(id)
 	
 #ppu - player position update
-func broadcast_player_position(pos):
-	rpc_id(1, "ppu", get_tree().get_network_unique_id(), pos, movement_update_id)
+func broadcast_player_position(pos, vel):
+	rpc_id(1, "ppu", get_tree().get_network_unique_id(), pos, vel, movement_update_id)
 	movement_update_id += 1
+	
+# correct player position. Used for invalid position correction
+remote func cpp(pos):
+	players[get_tree().get_network_unique_id()].node.position = pos

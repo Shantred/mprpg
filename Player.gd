@@ -1,19 +1,51 @@
 extends KinematicBody2D
 
 export var movement_speed = 400
+export var max_health = 300
+var current_health = 300
 var screen_size
 var is_attacking = false;
 var facing_direction = "right"
 var hit_distance = 85
 var player_id = 0
 var velocity = Vector2()
+var is_dead = false
 
 
 
 var my_peer = null
+
 func _ready():
 	screen_size = get_viewport_rect().size
 	
+func set_health(health):
+	current_health = health
+	
+	# Handles revive client-side
+	#if is_dead && current_health > 0:
+	#	client_revive()
+	
+	if current_health < 0:
+		current_health = 0
+	
+	#if current_health == 0 && !is_dead:
+		#client_death()
+		
+		
+	get_node("Healthbar").SetHealth(current_health)
+	
+func take_damage(amount):
+	current_health -= amount
+	if current_health < 0:
+		current_health = 0;
+	
+	#if current_health == 0:
+		#on_death()
+		
+	get_node("Healthbar").SetHealth(current_health)
+	
+func take_hit():
+	pass
 	
 func _physics_process(delta):
 	if (!is_attacking):
@@ -23,7 +55,8 @@ func _physics_process(delta):
 			$AnimatedSprite.play("idle")
 	
 	
-	
+func get_damage():
+	return 50;
 
 #func _physics_process(delta):
 #	var velocity = Vector2()
@@ -123,7 +156,8 @@ func attack():
 
 		var results = space_state.intersect_ray(Vector2(position.x, position.y), ray_vector, [self])
 		if results:
-			results.collider.take_hit()
+			if results.collider.has_method("take_hit"):
+				results.collider.take_hit()
 			return results
 		else:
 			return false
