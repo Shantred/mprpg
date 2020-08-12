@@ -31,6 +31,7 @@ extents = Vector2( 108.946, 174.321 )
 [node name="WallOfEYes" type="KinematicBody2D"]
 scale = Vector2( 0.25, 0.25 )
 script = ExtResource( 4 )
+MaxHealth = 30
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "Idle"
@@ -46,7 +47,6 @@ anims/hit = SubResource( 2 )
 texture = ExtResource( 1 )
 vframes = 16
 hframes = 4
-frame = 8
 
 [node name="RespawnTimer" type="Timer" parent="."]
 wait_time = 10.0
@@ -63,6 +63,5 @@ rect_scale = Vector2( 2, 1 )
 visible = false
 position = Vector2( -8.16223, 0 )
 shape = SubResource( 3 )
-[connection signal="animation_changed" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_changed"]
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
 [connection signal="timeout" from="RespawnTimer" to="." method="_on_RespawnTimer_timeout"]

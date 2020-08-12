@@ -73,8 +73,8 @@ func _process(delta):
 					# We need to update the direction that the player is facing
 					# We only need to do this if velocity is greater than 0. Updating
 					# this way preserves facing direction even while not moving
-					if players[peerId].velocity.x != 0:
-						players[peerId].node.set_direction(players[peerId].velocity)
+					if players[peerId].updates[keys[i]].velocity.x != 0:
+						players[peerId].node.set_direction(players[peerId].updates[keys[i]].velocity)
 					
 				players[peerId].node.set_health(players[peerId].updates[keys[i]].health)
 				
@@ -178,16 +178,13 @@ remote func pu(id, updateId, pos, velocity, health):
 	# Updates are sent as unreliable rpcs. Since they can be sent in an arbitrary order, discard if it's not the
 	# newest update
 	if updateId < last_update:
-		print("discarding update")
 		return
 		
 	last_update = updateId
 	players[id].updates[OS.get_ticks_msec()] = { position = pos, velocity = velocity, health = health }
 	
-	
 	# Only keep the last 10 updates
 	while len(players[id].updates) > 10:
-		#print("Deleting keys")
 		players[id].updates.erase(players[id].updates.keys()[0])
 		
 
@@ -202,7 +199,14 @@ remote func mu(updateId, mobId, pos, vel, currentHealth):
 		mobs[mobId].velocity = vel
 		mobs[mobId].node.set_health(currentHealth)
 		
-	
+# Player attack -- Another client is attacking
+remote func pa(playerId):
+	# The way we handle this attack may not be good enough in the long run. 
+	# It solves two problems for us currently, in that it allows the player attack
+	# animation to run AND eventually triggers the enemy attack animation. We may need
+	# to de-couple these things once latency is involved.
+	players[playerId].node.attack()
+
 remote func mobload(mobsFromServer):
 	print(str(mobsFromServer))
 	for mob in mobsFromServer:

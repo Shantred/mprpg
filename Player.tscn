@@ -83,6 +83,7 @@ position = Vector2( 22.1606, -68.698 )
 scale = Vector2( 0.25, 0.25 )
 z_index = 10
 script = ExtResource( 45 )
+max_health = 115
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 1 )
@@ -100,7 +101,7 @@ margin_top = -250.0
 margin_right = -57.9997
 margin_bottom = -225.0
 rect_scale = Vector2( 3, 1.25 )
-maxHealth = 300
+maxHealth = 115
 
 [node name="PlayerNameLabel" type="Label" parent="."]
 anchor_left = 0.5

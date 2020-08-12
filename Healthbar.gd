@@ -16,8 +16,9 @@ func SetHealth(amount):
 
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
-	SetHealth(maxHealth)
+func init(health):
+	maxHealth = health
+	SetHealth(health)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

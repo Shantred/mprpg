@@ -10,6 +10,9 @@ var hit_distance = 85
 var player_id = 0
 var velocity = Vector2()
 var is_dead = false
+var experience = 0
+var level = 1
+var damage = 13
 
 
 
@@ -17,6 +20,8 @@ var my_peer = null
 
 func _ready():
 	screen_size = get_viewport_rect().size
+	current_health = max_health
+	$Healthbar.init(current_health)
 	
 func set_health(health):
 	current_health = health
@@ -56,7 +61,7 @@ func _physics_process(delta):
 	
 	
 func get_damage():
-	return 1;
+	return damage;
 
 #func _physics_process(delta):
 #	var velocity = Vector2()
@@ -190,4 +195,17 @@ func set_direction(vel):
 	
 func set_name(name):
 	$PlayerNameLabel.text = name
+	
+func add_experience(amount):
+	experience += amount
+	if experience >= level * 150:
+		experience = 0
+		level += 1
+	
+		# TODO: This is temporary, for use with very simple level ups	
+		recalculate_damage()
+	
+func recalculate_damage():
+	damage = 10 * (1 + (level * .3))
+	
 	

@@ -115,6 +115,7 @@ remote func player_input(id, key, pressed):
 remote func player_attack(id):
 	# Make sure we don't trigger an attack twice in a row.
 	if !players[id].node.is_attacking():
+		rpc_unreliable("pa", id)
 		# Reset velocity to prevent unintended movement after attacks
 		players[id].velocity = Vector2()
 		var results = players[id].node.attack()
@@ -122,7 +123,11 @@ remote func player_attack(id):
 			#print("Attacked: " + str(results.collider))
 			if results.collider.has_method("take_damage"):
 				#print("Doing damage to target")
-				results.collider.take_damage(players[id].node.get_damage())
+				var damage = players[id].node.get_damage()
+				print("Player " + str(id) + " did " + str(damage) + " damage")
+				var dead = results.collider.take_damage(damage)
+				if dead:
+					players[id].node.add_experience(results.collider.experience)
 		
 func get_spawn_position():
 	var pos = Vector2(0,0)
@@ -205,7 +210,7 @@ remote func ppu(playerId, pos, vel, updateId):
 		if lastUpdateKey != null:
 			var lastUpdatePosition = lastUpdateKey.position
 			var distanceSinceLastUpdate = lastUpdatePosition.distance_to(pos)
-			print("Max distance: " + str(maxDistance) + " distanceSinceLastUpdate: " + str(distanceSinceLastUpdate))
+			#print("Max distance: " + str(maxDistance) + " distanceSinceLastUpdate: " + str(distanceSinceLastUpdate))
 			
 			# If the player has gone too far, set them to the last known valid position
 			if (distanceSinceLastUpdate > maxDistance + 15):
@@ -217,13 +222,15 @@ remote func ppu(playerId, pos, vel, updateId):
 					rpc_id(playerId, "cpp", lastUpdatePosition)
 			
 			players[playerId].node.position = pos
-			players[playerId].updates[lastUpdateTime] = { position = pos }
+			players[playerId].velocity = vel
+			players[playerId].updates[lastUpdateTime] = { position = pos, velocity = vel }
 			players[playerId].player_update_id = updateId
 			players[playerId].last_update_time = lastUpdateTime
 		else:
 			# No updates yet, we should be able to trust the first
 			players[playerId].node.position = pos
-			players[playerId].updates[lastUpdateTime] = { position = pos }
+			players[playerId].velocity = vel
+			players[playerId].updates[lastUpdateTime] = { position = pos, velocity = vel }
 			players[playerId].player_update_id = updateId
 			players[playerId].last_update_time = lastUpdateTime
 			

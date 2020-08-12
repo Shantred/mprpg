@@ -7,6 +7,7 @@ var velocity = Vector2()
 
 var area_radius = 400
 var is_dead = false
+var experience = 50
 
 # Used when calculating respawn position. We want the area the mob spawns in to be relative
 # to where they started, not where they currently are
@@ -47,6 +48,7 @@ func take_damage(amount):
 		
 	get_node("Healthbar").SetHealth(currentHealth)
 	
+	return currentHealth == 0
 func client_death():
 	print("Mob died")
 	is_dead = true
@@ -76,6 +78,8 @@ func client_revive():
 func _ready():
 	starting_position = self.position
 	$AnimationPlayer.play("Idle")
+	currentHealth = MaxHealth
+	$Healthbar.init(currentHealth)
 	
 func on_death():
 	print("wallofeyes dead")
@@ -104,7 +108,7 @@ func respawn():
 	$AnimationPlayer.play("Idle")
 	$CollisionShape2D.disabled = false
 	
-
+	print("Health is: " + str(currentHealth))
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 
 
@@ -138,9 +142,6 @@ func get_random_position(radius):
 
 func _on_AnimationPlayer_animation_finished(anim_name):
 	if anim_name == "hit":
-		print("playint idle")
 		$AnimationPlayer.play("Idle")
-
-
-func _on_AnimationPlayer_animation_changed(old_name, new_name):
-	print("Changing animation from " + old_name + " to " + new_name)
+		
+		
