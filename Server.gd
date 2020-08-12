@@ -62,7 +62,7 @@ func player_disconnected(id):
 	
 	
 remote func register_player(id, info):
-	print("Registering player!")
+	print("Registering player with name " + info.name)
 			
 	
 	info.position = get_spawn_position()

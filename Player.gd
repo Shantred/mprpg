@@ -56,7 +56,7 @@ func _physics_process(delta):
 	
 	
 func get_damage():
-	return 50;
+	return 1;
 
 #func _physics_process(delta):
 #	var velocity = Vector2()
@@ -187,4 +187,7 @@ func set_direction(vel):
 		facing_direction = "up"
 		
 	$AnimatedSprite.flip_h = velocity.x < 0
+	
+func set_name(name):
+	$PlayerNameLabel.text = name
 	

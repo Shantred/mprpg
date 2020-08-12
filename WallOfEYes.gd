@@ -8,10 +8,16 @@ var velocity = Vector2()
 var area_radius = 400
 var is_dead = false
 
+# Used when calculating respawn position. We want the area the mob spawns in to be relative
+# to where they started, not where they currently are
+var starting_position = Vector2()
+
 # Take hit is separate from take_damage. Take_damage is done only
 # once the server verifies the hit. take_hit simply animates the attack
 func take_hit():
-	pass
+	print("player hit mob")
+	$AnimationPlayer.stop()
+	$AnimationPlayer.play("hit")
 	
 
 	
@@ -68,6 +74,7 @@ func client_revive():
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	starting_position = self.position
 	$AnimationPlayer.play("Idle")
 	
 func on_death():
@@ -112,6 +119,7 @@ func collide():
 func test():
 	return "test success!"
 	
+# TODO: Uhhh, this has no way to bias it to the position the mob starts in
 func get_random_position(radius):
 	print("Getting random position")
 	var x1 = rand_range(-1, 1)
@@ -126,3 +134,13 @@ func get_random_position(radius):
 	)
 	
 	return random_position * rand_range(0, radius)
+
+
+func _on_AnimationPlayer_animation_finished(anim_name):
+	if anim_name == "hit":
+		print("playint idle")
+		$AnimationPlayer.play("Idle")
+
+
+func _on_AnimationPlayer_animation_changed(old_name, new_name):
+	print("Changing animation from " + old_name + " to " + new_name)

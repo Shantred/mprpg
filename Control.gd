@@ -21,5 +21,4 @@ func _on_Host_Button_pressed():
 
 
 func _on_Join_Button_pressed():
-	print("Joining game...")
-	get_tree().change_scene("res://Client.tscn")
+	get_tree().change_scene("res://JoinMenu.tscn")

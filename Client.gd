@@ -6,7 +6,7 @@ var mobs = {}
 var cached_player = load("res://Player.tscn")
 var cached_woe = load("res://WallOfEYes.tscn")
 var my_peer = null
-var my_info = { name = "teent" }
+var my_info = { name = "none" }
 var movement_update_id = 0
 
 var delta_update = 0
@@ -18,7 +18,7 @@ onready var world_mobs = $world/mobs
 func _ready():
 	print("Connecting to server...")
 	var peer = NetworkedMultiplayerENet.new()
-	peer.create_client("127.0.0.1", 1337)
+	peer.create_client(Global.get_ip(), 1337)
 	
 	get_tree().set_network_peer(peer)
 	print("My id is: " + str(get_tree().get_network_unique_id()))
@@ -155,7 +155,7 @@ func _physics_process(delta):
 
 func client_connected_ok():
 	print("client connected!")
-	my_info.name = "Tester"
+	my_info.name = Global.get_name()
 	rpc_id(1, "register_player", get_tree().get_network_unique_id(), my_info)
 	print("Send rpc to server for connect!")
 	
@@ -233,7 +233,7 @@ remote func player_joined(id, info):
 	
 	var pos = Vector2(info.position.x, info.position.y)
 	node_player.set_position(pos)
-	node_player.name = info.name
+	node_player.set_name(info.name)
 	
 	# If the player is the current player, attach our Camera2D object to it
 	if id == get_tree().get_network_unique_id():

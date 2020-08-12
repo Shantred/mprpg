@@ -19,6 +19,10 @@ config/name="diabloinanhour"
 run/main_scene="res://Menu.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+Global="*res://Global.gd"
+
 [rendering]
 
 quality/driver/driver_name="GLES2"

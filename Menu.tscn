@@ -3,6 +3,8 @@
 [ext_resource path="res://Control.gd" type="Script" id=1]
 
 [node name="Control" type="Control"]
+margin_left = 20.0
+margin_top = 20.0
 margin_right = 40.0
 margin_bottom = 40.0
 script = ExtResource( 1 )
@@ -11,7 +13,7 @@ __meta__ = {
 }
 
 [node name="Host Button" type="Button" parent="."]
-margin_right = 83.0
+margin_right = 85.0
 margin_bottom = 20.0
 text = "Host Game"
 __meta__ = {
@@ -19,9 +21,9 @@ __meta__ = {
 }
 
 [node name="Join Button" type="Button" parent="."]
-margin_top = 29.0
-margin_right = 86.0
-margin_bottom = 49.0
+margin_top = 40.0
+margin_right = 85.0
+margin_bottom = 60.0
 text = "Join Game"
 __meta__ = {
 "_edit_use_anchors_": false
