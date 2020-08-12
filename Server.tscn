@@ -18,9 +18,31 @@ script = ExtResource( 1 )
 position = Vector2( 83.7444, 190.652 )
 
 [node name="WallOfEYes2" parent="world/mobs" instance=ExtResource( 3 )]
-position = Vector2( 256.579, 144.326 )
+position = Vector2( 267.127, -249.486 )
+
+[node name="WallOfEYes3" parent="world/mobs" instance=ExtResource( 3 )]
+position = Vector2( 659.283, 84.3882 )
+
+[node name="WallOfEYes4" parent="world/mobs" instance=ExtResource( 3 )]
+position = Vector2( -346.343, -237.342 )
+
+[node name="WallOfEYes5" parent="world/mobs" instance=ExtResource( 3 )]
+position = Vector2( -821.027, -205.696 )
+
+[node name="WallOfEYes6" parent="world/mobs" instance=ExtResource( 3 )]
+position = Vector2( -666.315, 418.425 )
+
+[node name="WallOfEYes7" parent="world/mobs" instance=ExtResource( 3 )]
+position = Vector2( 5.27429, 530.942 )
+
+[node name="WallOfEYes8" parent="world/mobs" instance=ExtResource( 3 )]
+position = Vector2( 964.613, 657.209 )
+
+[node name="WallOfEYes9" parent="world/mobs" instance=ExtResource( 3 )]
+position = Vector2( -376.305, 789.71 )
 
 [node name="ServerCam" parent="world" instance=ExtResource( 4 )]
+position = Vector2( -303.086, 180.95 )
 collision_layer = 524288
 
 [node name="Camera2D" type="Camera2D" parent="world/ServerCam"]
