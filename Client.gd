@@ -116,37 +116,45 @@ func _process(delta):
 #	if Input.is_action_just_released("ui_down"):
 #		rpc_id(1, "player_input", get_tree().get_network_unique_id(), "down", false)
 		
-		
+	
 		
 func _physics_process(delta):
 	var playerId = get_tree().get_network_unique_id()
 	var player = players[playerId].node
 	
-	player.velocity = Vector2()
-	
-	if Input.is_action_pressed("ui_right"):
-		player.velocity.x = 1
-	if Input.is_action_pressed("ui_left"):
-		player.velocity.x = -1
-	if Input.is_action_pressed("ui_down"):
-		player.velocity.y = 1
-	if Input.is_action_pressed("ui_up"):
-		player.velocity.y = -1
+	# Close session when player dies
+	if player.current_health <= 0 && player.is_dead == false:
+		player.is_dead = true
+		player.hide()
+		OS.alert('Suck it, nerd!', 'You died!')
+		yield(get_tree().create_timer(5), "timeout")
+		get_tree().quit()
 		
-	if player.velocity.x != 0:
-		player.set_direction(player.velocity)
-	
-	if player.velocity.length() > 0:
-		player.velocity = player.velocity.normalized() * 400
-		#print(str(player.velocity.normalized() * 400))
-		#print("position before: " + str(player.position))
-		#print("delta: " + str(delta))
-		#print("collide param:" + str(player.velocity * delta))
-		var previousPosition = player.position
-		player.move_and_collide(player.velocity * delta)
-		var afterMoveAndCollide = player.position
-		#print("position after: " + str(player.position))
-		#print("distance moved:" + str(previousPosition.distance_to(afterMoveAndCollide)))
+	player.velocity = Vector2()
+	if !player.is_attacking():
+		if Input.is_action_pressed("ui_right"):
+			player.velocity.x = 1
+		if Input.is_action_pressed("ui_left"):
+			player.velocity.x = -1
+		if Input.is_action_pressed("ui_down"):
+			player.velocity.y = 1
+		if Input.is_action_pressed("ui_up"):
+			player.velocity.y = -1
+			
+		if player.velocity.x != 0:
+			player.set_direction(player.velocity)
+		
+		if player.velocity.length() > 0:
+			player.velocity = player.velocity.normalized() * 400
+			#print(str(player.velocity.normalized() * 400))
+			#print("position before: " + str(player.position))
+			#print("delta: " + str(delta))
+			#print("collide param:" + str(player.velocity * delta))
+			var previousPosition = player.position
+			player.move_and_collide(player.velocity * delta)
+			var afterMoveAndCollide = player.position
+			#print("position after: " + str(player.position))
+			#print("distance moved:" + str(previousPosition.distance_to(afterMoveAndCollide)))
 		
 	delta_update += delta
 	while delta_update >= delta_interval:
@@ -243,6 +251,7 @@ remote func player_joined(id, info):
 	if id == get_tree().get_network_unique_id():
 		var playerCamera = Camera2D.new()
 		playerCamera.make_current()
+		playerCamera.zoom = Vector2(1.25, 1.25)
 		node_player.add_child(playerCamera)
 		
 	

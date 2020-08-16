@@ -5,7 +5,7 @@ var currentHealth = 10
 
 var velocity = Vector2()
 
-var area_radius = 400
+var area_radius = 1200
 var is_dead = false
 var experience = 50
 
@@ -15,10 +15,13 @@ var starting_position = Vector2()
 
 # Take hit is separate from take_damage. Take_damage is done only
 # once the server verifies the hit. take_hit simply animates the attack
-func take_hit():
-	print("player hit mob")
+func take_hit(direction):
+	# Animation plays as though the monster was attacked from the left. 
+	if direction == "right":
+		$Sprite.flip_h = 1
 	$AnimationPlayer.stop()
 	$AnimationPlayer.play("hit")
+	
 	
 
 	
@@ -145,3 +148,7 @@ func _on_AnimationPlayer_animation_finished(anim_name):
 		$AnimationPlayer.play("Idle")
 		
 		
+
+
+func _on_DetectionArea_body_entered(body):
+	pass

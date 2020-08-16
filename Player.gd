@@ -15,7 +15,6 @@ var level = 1
 var damage = 13
 
 
-
 var my_peer = null
 
 func _ready():
@@ -49,7 +48,7 @@ func take_damage(amount):
 		
 	get_node("Healthbar").SetHealth(current_health)
 	
-func take_hit():
+func take_hit(direction):
 	pass
 	
 func _physics_process(delta):
@@ -162,7 +161,7 @@ func attack():
 		var results = space_state.intersect_ray(Vector2(position.x, position.y), ray_vector, [self])
 		if results:
 			if results.collider.has_method("take_hit"):
-				results.collider.take_hit()
+				results.collider.take_hit(facing_direction)
 			return results
 		else:
 			return false
